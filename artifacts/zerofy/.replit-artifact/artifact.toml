@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Zerofy"
+version = "1.0.0"
+id = "artifacts/zerofy"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 25621
+
+[services.development]
+run = "pnpm --filter @workspace/zerofy run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/zerofy", "run", "build" ]
+publicDir = "artifacts/zerofy/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "25621"
+BASE_PATH = "/"

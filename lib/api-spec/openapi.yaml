@@ -1,22 +1,36 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Zerofy API — AI Climate Intelligence Platform
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication
+  - name: users
+    description: User profile
+  - name: carbon
+    description: Carbon footprint calculations
+  - name: dashboard
+    description: Dashboard metrics
+  - name: goals
+    description: Carbon reduction goals
+  - name: simulate
+    description: Climate twin simulator
+  - name: recommendations
+    description: AI-powered recommendations
+  - name: community
+    description: Community leaderboard and challenges
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +38,675 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterInput"
+      responses:
+        "201":
+          description: Registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /carbon/calculate:
+    post:
+      operationId: calculateCarbon
+      tags: [carbon]
+      summary: Calculate carbon footprint
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CarbonInput"
+      responses:
+        "200":
+          description: Calculation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarbonResult"
+
+  /carbon/profile:
+    get:
+      operationId: getCarbonProfile
+      tags: [carbon]
+      summary: Get user's current carbon profile
+      responses:
+        "200":
+          description: Carbon profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarbonProfile"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    put:
+      operationId: saveCarbonProfile
+      tags: [carbon]
+      summary: Save user carbon profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CarbonInput"
+      responses:
+        "200":
+          description: Saved profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CarbonProfile"
+
+  /dashboard/metrics:
+    get:
+      operationId: getDashboardMetrics
+      tags: [dashboard]
+      summary: Get dashboard overview metrics
+      responses:
+        "200":
+          description: Dashboard metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardMetrics"
+
+  /dashboard/emission-history:
+    get:
+      operationId: getEmissionHistory
+      tags: [dashboard]
+      summary: Get 6-month emission history
+      responses:
+        "200":
+          description: Emission history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmissionHistoryPoint"
+
+  /goals:
+    get:
+      operationId: getGoals
+      tags: [goals]
+      summary: List user goals
+      responses:
+        "200":
+          description: Goals list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Goal"
+    post:
+      operationId: createGoal
+      tags: [goals]
+      summary: Create a new goal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GoalInput"
+      responses:
+        "201":
+          description: Goal created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+
+  /goals/{id}:
+    patch:
+      operationId: updateGoal
+      tags: [goals]
+      summary: Update goal progress
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GoalUpdate"
+      responses:
+        "200":
+          description: Updated goal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Goal"
+    delete:
+      operationId: deleteGoal
+      tags: [goals]
+      summary: Delete a goal
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MessageResponse"
+
+  /simulate:
+    post:
+      operationId: simulateScenario
+      tags: [simulate]
+      summary: Simulate a climate twin scenario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SimulationInput"
+      responses:
+        "200":
+          description: Simulation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SimulationResult"
+
+  /recommendations:
+    get:
+      operationId: getRecommendations
+      tags: [recommendations]
+      summary: Get personalized recommendations based on carbon profile
+      responses:
+        "200":
+          description: Recommendations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Recommendation"
+
+  /community/leaderboard:
+    get:
+      operationId: getCommunityLeaderboard
+      tags: [community]
+      summary: Get top users by carbon score improvement
+      responses:
+        "200":
+          description: Leaderboard
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LeaderboardEntry"
+
+  /community/challenges:
+    get:
+      operationId: getCommunityChallenge
+      tags: [community]
+      summary: Get active community challenges
+      responses:
+        "200":
+          description: Challenges
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Challenge"
+
+  /community/stats:
+    get:
+      operationId: getCommunityStats
+      tags: [community]
+      summary: Get aggregate community impact stats
+      responses:
+        "200":
+          description: Community stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CommunityStats"
+
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
 
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    MessageResponse:
+      type: object
+      required: [message]
+      properties:
+        message:
+          type: string
+
+    RegisterInput:
+      type: object
+      required: [email, password, name]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+        name:
+          type: string
+
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    User:
+      type: object
+      required: [id, email, name, createdAt]
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        name:
+          type: string
+        createdAt:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [user, token]
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+
+    CarbonInput:
+      type: object
+      required: [weeklyKmDriven, carType, monthlyKwh, energySourceMix, dietType, flightsPerYear, flightType, monthlyShoppingSpend, region]
+      properties:
+        weeklyKmDriven:
+          type: number
+          description: Weekly km driven by car
+        carType:
+          type: string
+          enum: [petrol, diesel, ev, none]
+        monthlyKwh:
+          type: number
+          description: Monthly electricity usage in kWh
+        energySourceMix:
+          type: object
+          required: [coal, gas, renewables]
+          properties:
+            coal:
+              type: number
+              description: Percentage coal 0-100
+            gas:
+              type: number
+              description: Percentage gas 0-100
+            renewables:
+              type: number
+              description: Percentage renewables 0-100
+        dietType:
+          type: string
+          enum: [vegan, vegetarian, omnivore, heavy_meat]
+        flightsPerYear:
+          type: integer
+        flightType:
+          type: string
+          enum: [short, long, mixed]
+        monthlyShoppingSpend:
+          type: number
+        region:
+          type: string
+          description: User region for grid emission intensity
+
+    CarbonResult:
+      type: object
+      required: [totalAnnualKgCo2, breakdown, percentileVsGlobal, carbonScore]
+      properties:
+        totalAnnualKgCo2:
+          type: number
+        breakdown:
+          $ref: "#/components/schemas/EmissionBreakdown"
+        percentileVsGlobal:
+          type: number
+          description: 0-100 percentile vs global average (lower = better)
+        carbonScore:
+          type: integer
+          description: Score from 0-100 (higher = better)
+
+    EmissionBreakdown:
+      type: object
+      required: [transportation, electricity, food, shopping, total]
+      properties:
+        transportation:
+          type: number
+        electricity:
+          type: number
+        food:
+          type: number
+        shopping:
+          type: number
+        total:
+          type: number
+
+    CarbonProfile:
+      type: object
+      required: [id, userId, inputs, result, createdAt, updatedAt]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        inputs:
+          $ref: "#/components/schemas/CarbonInput"
+        result:
+          $ref: "#/components/schemas/CarbonResult"
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    DashboardMetrics:
+      type: object
+      required: [carbonScore, totalAnnualKgCo2, breakdown, monthlyDelta, goalsCount, goalsCompleted, totalCo2Saved]
+      properties:
+        carbonScore:
+          type: integer
+        totalAnnualKgCo2:
+          type: number
+        breakdown:
+          $ref: "#/components/schemas/EmissionBreakdown"
+        monthlyDelta:
+          type: number
+          description: Change vs last month in kg CO2
+        goalsCount:
+          type: integer
+        goalsCompleted:
+          type: integer
+        totalCo2Saved:
+          type: number
+
+    EmissionHistoryPoint:
+      type: object
+      required: [month, year, totalKgCo2, score]
+      properties:
+        month:
+          type: string
+        year:
+          type: integer
+        totalKgCo2:
+          type: number
+        score:
+          type: integer
+
+    GoalInput:
+      type: object
+      required: [title, targetKgCo2Reduction, category, deadline]
+      properties:
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        targetKgCo2Reduction:
+          type: number
+        category:
+          type: string
+          enum: [transportation, electricity, food, shopping, other]
+        deadline:
+          type: string
+          format: date
+
+    GoalUpdate:
+      type: object
+      properties:
+        currentProgress:
+          type: number
+        completed:
+          type: boolean
+
+    Goal:
+      type: object
+      required: [id, userId, title, targetKgCo2Reduction, currentProgress, category, deadline, completed, createdAt]
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        targetKgCo2Reduction:
+          type: number
+        currentProgress:
+          type: number
+        category:
+          type: string
+        deadline:
+          type: string
+        completed:
+          type: boolean
+        createdAt:
+          type: string
+
+    SimulationInput:
+      type: object
+      required: [publicTransportAdoptionPct, renewableEnergyPct, dietShift, flightReductionPct]
+      properties:
+        publicTransportAdoptionPct:
+          type: number
+          description: 0-100 percent adoption of public transport
+        renewableEnergyPct:
+          type: number
+          description: 0-100 percent renewable energy
+        dietShift:
+          type: string
+          enum: [none, vegetarian, vegan]
+        flightReductionPct:
+          type: number
+          description: 0-100 percent reduction in flights
+
+    SimulationResult:
+      type: object
+      required: [currentAnnualKgCo2, projectedAnnualKgCo2, deltaKgCo2, percentageReduction, treesEquivalent, carFreeDays, explanation, breakdown, projectedBreakdown]
+      properties:
+        currentAnnualKgCo2:
+          type: number
+        projectedAnnualKgCo2:
+          type: number
+        deltaKgCo2:
+          type: number
+        percentageReduction:
+          type: number
+        treesEquivalent:
+          type: number
+          description: Number of trees needed to absorb this amount in a year
+        carFreeDays:
+          type: number
+        explanation:
+          type: string
+        breakdown:
+          $ref: "#/components/schemas/EmissionBreakdown"
+        projectedBreakdown:
+          $ref: "#/components/schemas/EmissionBreakdown"
+
+    Recommendation:
+      type: object
+      required: [id, action, estimatedKgCo2Reduction, costImpact, costDirection, difficulty, category, priority]
+      properties:
+        id:
+          type: string
+        action:
+          type: string
+        description:
+          type: string
+        estimatedKgCo2Reduction:
+          type: number
+        costImpact:
+          type: number
+          description: Annual cost impact in GBP (positive = savings)
+        costDirection:
+          type: string
+          enum: [save, cost]
+        difficulty:
+          type: string
+          enum: [easy, medium, hard]
+        category:
+          type: string
+          enum: [transportation, electricity, food, shopping, other]
+        priority:
+          type: integer
+
+    LeaderboardEntry:
+      type: object
+      required: [rank, userId, name, carbonScore, scoreImprovement, totalCo2Saved]
+      properties:
+        rank:
+          type: integer
+        userId:
+          type: integer
+        name:
+          type: string
+        carbonScore:
+          type: integer
+        scoreImprovement:
+          type: number
+        totalCo2Saved:
+          type: number
+
+    Challenge:
+      type: object
+      required: [id, title, description, participantCount, targetKgCo2, category, endDate, active]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        participantCount:
+          type: integer
+        targetKgCo2:
+          type: number
+        category:
+          type: string
+        endDate:
+          type: string
+        active:
+          type: boolean
+
+    CommunityStats:
+      type: object
+      required: [totalUsers, totalCo2Saved, activeChallenges, avgCarbonScore]
+      properties:
+        totalUsers:
+          type: integer
+        totalCo2Saved:
+          type: number
+        activeChallenges:
+          type: integer
+        avgCarbonScore:
+          type: number
