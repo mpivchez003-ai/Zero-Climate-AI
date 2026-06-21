@@ -19,4 +19,4 @@ AI-powered climate intelligence platform that helps users track, predict, and re
 https://zero-climate-ai--chezhiyan003.replit.app/
 
 ## Repository 
-https://github.com/mpivchez003-ai/Zerofy-AI
+https://github.com/mpivchez003-ai/Zero-Climate-AI
