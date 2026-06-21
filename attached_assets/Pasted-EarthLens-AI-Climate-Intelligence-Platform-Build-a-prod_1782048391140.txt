@@ -1,0 +1,124 @@
+EarthLens — AI Climate Intelligence Platform
+Build a production-ready, full-stack web application called EarthLens. Deploy it end-to-end. Do not generate mockups, placeholder data, or stub logic. Every feature must be wired to real code, real calculations, and real data flows.
+
+Stack
+
+Frontend: React + Tailwind CSS + Framer Motion
+Backend: Node.js (Express) or Python (FastAPI) — choose the most production-appropriate
+Database: PostgreSQL with full schema migrations
+Auth: Google OAuth + email/password via JWT sessions
+Deployment: Docker + Google Cloud Run (or Firebase Hosting for frontend, Cloud Run for API)
+Charts: Recharts or D3.js — no static images
+3D Globe: Three.js or CesiumJS with real lat/long climate overlays
+
+
+What to Build
+1. Landing Page (investor-grade)
+A full marketing page with:
+
+Animated 3D Earth globe as the hero centerpiece (Three.js). Rotate it. Overlay real country-level CO₂ emission data from the Global Carbon Project dataset (embed the JSON directly if API is unavailable).
+Live-updating environmental stats panel: global CO₂ ppm (use NOAA's public Mauna Loa CSV or embed the latest values with a realistic refresh simulation), global temperature anomaly, sea level rise index.
+Sections: Climate Twin Technology, AI Assistant Aria, Carbon Tracking, Community Hub, Success Metrics, Investor Stats, CTA.
+Smooth scroll animations, particle background, hover states on all cards.
+All numbers must be sourced from or grounded in real datasets — no invented figures.
+
+2. Authentication
+
+Google OAuth 2.0 login
+Email + password with bcrypt hashing
+JWT access + refresh token flow
+Protected routes on dashboard
+
+3. PostgreSQL Database
+Create and run migrations for these tables:
+users, carbon_profiles, emission_logs, simulations, goals, recommendations, community_challenges, achievements, climate_reports
+Seed the database with realistic sample data for demo purposes.
+4. Carbon Footprint Engine (real calculations, not random numbers)
+Accept user inputs:
+
+Weekly km driven (car type: petrol/diesel/EV)
+Monthly electricity kWh + energy source mix (coal/gas/renewables %)
+Diet type (vegan / vegetarian / omnivore / heavy meat)
+Flights per year (short/long haul)
+Monthly shopping spend
+
+Compute outputs using published emission factors:
+
+Car: IPCC average g CO₂/km by fuel type
+Electricity: IEA grid emission intensity by region
+Diet: Oxford/Poore & Nemecek 2018 lifecycle values
+Flights: ICAO carbon calculator methodology
+Shopping: UK DEFRA spend-based emission factors
+
+Return: total annual kg CO₂, breakdown by category, percentile vs global average, carbon score (0–100).
+5. Dashboard
+Authenticated view with:
+
+Carbon Score card: current score, 6-month trend sparkline, monthly delta
+Emission Breakdown: donut/bar chart split by category (transportation, electricity, food, shopping, waste)
+Active Goals: progress bars, completion %, projected impact in kg CO₂ saved
+Aria AI Recommendations: call the Anthropic API (claude-sonnet-4-6) with the user's carbon profile as context. Return 5 ranked actions with: action name, estimated kg CO₂ reduction, cost impact (save/cost £X/year), difficulty (easy/medium/hard). Render these as interactive cards.
+Climate Twin Simulator: let the user toggle sliders (% public transport adoption, % renewable energy, diet shift, flight reduction). On change, recompute their projected annual emissions using the carbon engine and render a before/after comparison chart. Show: "This scenario reduces your emissions by X% — equivalent to planting Y trees."
+
+6. AI Climate Twin (Predictive Engine)
+Build an endpoint POST /api/simulate that:
+
+Accepts a user's current profile + proposed behavioral changes
+Runs the carbon calculation for both current and proposed state
+Returns: emission delta, percentage change, equivalent metrics (trees, car-free days, transatlantic flights avoided), a plain-English explanation of the projection
+Feeds results into the dashboard simulator in real time
+
+7. Community Impact Hub
+
+Public leaderboard (top 10 users by carbon score improvement this month)
+Active community challenges (e.g. "Go meatless for 30 days — 847 participants")
+Achievement badges (earned based on real goal completion in the DB)
+Shared impact counter: sum of all users' CO₂ reductions, displayed live
+
+8. REST API — Document All Endpoints
+Generate an OpenAPI 3.0 spec (openapi.yaml) covering:
+POST /auth/register
+POST /auth/login
+GET  /api/user/profile
+POST /api/carbon/calculate
+GET  /api/dashboard/metrics
+POST /api/simulate
+GET  /api/recommendations
+GET  /api/goals
+POST /api/goals
+GET  /api/community/leaderboard
+GET  /api/community/challenges
+9. Deployment
+
+Dockerfile for API
+docker-compose.yml with API + PostgreSQL + optional Redis for session caching
+cloudbuild.yaml for Google Cloud Run deployment
+Frontend deployed to Firebase Hosting or Cloud Run
+Environment variable config via .env.example
+README with full local setup instructions and one-command deploy
+
+
+Constraints
+
+Every chart renders from real computed or seeded data — no Math.random() for metrics
+Every AI call to the Anthropic API must include the actual user carbon profile in context — no generic responses
+The 3D globe must display real CO₂ data per country, not decorative animation only
+All emission calculations must reference the specific published source they use (add a comment in code)
+The app must be fully functional offline from the API with realistic fallback seed data
+Accessibility: semantic HTML, ARIA labels, keyboard-navigable dashboard, WCAG AA contrast
+
+
+Deliverables Checklist
+When complete, the following must exist and work:
+
+ Landing page live at root URL
+ Auth flow (register, login, logout, protected dashboard)
+ Carbon calculator returning real numbers
+ Dashboard with live charts from DB data
+ Aria AI cards powered by real Anthropic API call
+ Climate Twin simulator with before/after chart
+ Community leaderboard and challenges
+ OpenAPI spec file
+ Docker + Cloud Run deployment config
+ Seeded database with demo user data
+ README with setup and deploy instructions
